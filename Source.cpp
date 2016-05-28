@@ -11,7 +11,7 @@ void EditFile(char Link1[])
 		printf("2: INSERT\n");
 		printf("3: THOAT\n");
 		int chon;
-		printf("Chon cong viec: ");
+		printf("Choose: ");
 		scanf("%d", &chon);
 		switch (chon)
 		{
