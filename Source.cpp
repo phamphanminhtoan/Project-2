@@ -2,7 +2,11 @@
 #include <string.h>
 #include <direct.h>
 #include <Windows.h>
+#include <fcntl.h>
+#include <io.h>
 using namespace std;
+#pragma warning(disable:4996)
+
 void EditFile(char Link1[])
 {
 	for (int i = 0;; i++)
@@ -11,48 +15,48 @@ void EditFile(char Link1[])
 		printf("2: INSERT\n");
 		printf("3: THOAT\n");
 		int chon;
-		printf("Choose: ");
+		printf("Chon cong viec: ");
 		scanf("%d", &chon);
 		switch (chon)
 		{
 		case 1:
-			{
-				char reStr[100];
-				gets(reStr);
-				int ln = strlen(reStr);
-				FILE *f = fopen(Link1, "rt");
-				if (f != NULL)
-				{
-					while (!feof(f))
-					{
-						if (fgetc(f) == reStr[0])
-						{
-							int flag;
-							int count = 1;
-							for (int i = 1; i < ln; i++)
-							{
-								if (fgetc(f) == reStr[i])
-								{
-									count++;
-								}
-								else
-								{
-									flag = i;
-									break;
-								}
-							}
-							if (count == ln)
-							{
-								fseek(f, -ln, SEEK_CUR);
-								for (int j = 0; j < ln; j++)
-								{
+		{
+				  char reStr[100];
+				  gets(reStr);
+				  int ln = strlen(reStr);
+				  FILE *f = fopen(Link1, "rt");
+				  if (f != NULL)
+				  {
+					  while (!feof(f))
+					  {
+						  if (fgetc(f) == reStr[0])
+						  {
+							  int flag;
+							  int count = 1;
+							  for (int i = 1; i < ln; i++)
+							  {
+								  if (fgetc(f) == reStr[i])
+								  {
+									  count++;
+								  }
+								  else
+								  {
+									  flag = i;
+									  break;
+								  }
+							  }
+							  if (count == ln)
+							  {
+								  fseek(f, -ln, SEEK_CUR);
+								  for (int j = 0; j < ln; j++)
+								  {
 
-								}
-							}
-						}
-					}
-				}
-			}
+								  }
+							  }
+						  }
+					  }
+				  }
+		}
 			break;
 		case 2:
 		{
@@ -162,7 +166,17 @@ void ImplementedCommands(char temp[], char commands[], int i, char deDir[])
 	}
 	if (stricmp(temp, "del") == 0)
 	{
-		DeleteFile(Link1);
+		int check;
+		printf("Do you want to delete this file?\n");
+		printf("1: yes\n");
+		printf("0: no\n");
+		scanf("%d", &check);
+		if (check == 1)
+		{
+			DeleteFile(Link1);
+			printf("Delete successfully!\n");
+			return;
+		}
 		return;
 	}
 	if (stricmp(temp, "mkdir") == 0)
@@ -172,17 +186,38 @@ void ImplementedCommands(char temp[], char commands[], int i, char deDir[])
 	}
 	if (stricmp(temp, "rd") == 0)
 	{
-		rmdir(Link1);
+		int check;
+		printf("Do you want to delete this folder?\n");
+		printf("1: yes\n");
+		printf("0: no\n");
+		scanf("%d", &check);
+		if (check == 1)
+		{
+			rmdir(Link1);
+			printf("Delete successfully!\n");
+			return;
+		}
 		return;
 	}
 	if (stricmp(temp, "createfile") == 0)
 	{
-		FILE *fSrc = fopen(Link1, "w");
+		FILE *fSrc = fopen(Link1, "a");
+		system(Link1);
 		fclose(fSrc);
 		return;
 	}
 	if (stricmp(temp, "viewfile") == 0)
 	{
+		FILE *fView = fopen(Link1, "rb");
+		setmode(fileno(fView), _O_U16TEXT);
+		fgetwc(fView);
+		wchar_t c[100];
+		while (!feof(fView))
+		{
+			fgetws(c, 100, fView);
+			wcout << c;
+		}
+		fclose(fView);
 		return;
 	}
 	if (stricmp(temp, "editfile") == 0)
